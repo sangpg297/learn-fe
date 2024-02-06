@@ -1,13 +1,15 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import usePage from "./usePage";
+import deleteIcon from "@/public/icons/delete-button.svg";
 
 export default function ChatLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { chatHistory, CreatNewChat } = usePage();
+  const { chatHistory, CreatNewChat, DeleteChat } = usePage();
 
   return (
     <section>
@@ -38,13 +40,26 @@ export default function ChatLayout({
             </div>
             <div className="flex flex-row items-start justify-center h-full w-full overflow-y-auto">
               <ul>
-                {chatHistory && chatHistory.map((history: string) => {
-                  return (
-                    <li key={history} className="font-bold rounded-xl px-2 py-1 flex-shrink-0 hover:bg-stone-500 h-8 w-100">
-                      <Link href={"/chat/" + history}>ChatId: {history}</Link>
-                    </li>
-                  );
-                })}
+                {chatHistory &&
+                  chatHistory.map((history: string) => {
+                    return (
+                      <li
+                        key={history}
+                        className="font-bold flex-shrink-0 h-8 w-80 flex flex-row justify-center items-center"
+                      >
+                        <div className="hover:bg-stone-500 rounded-xl px-2 py-1">
+                          <Link href={"/chat/" + history}>
+                            ChatId: {history}
+                          </Link>
+                        </div>
+                        <div>
+                          <button className="flex items-center justify-center text-black-700 hover:opacity-20" onClick={() => DeleteChat(history)}>
+                            <Image width={20} src={deleteIcon} alt="SVG" />
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           </div>

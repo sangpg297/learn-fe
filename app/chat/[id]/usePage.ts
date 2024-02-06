@@ -2,12 +2,43 @@ import { TYPE_CHAT } from "@/constants/chat";
 import { IMessage } from "@/declares/models";
 import chatApi from "@/services/api/chat";
 import { useState, useEffect, useRef } from "react";
+import io, { Socket } from "socket.io-client";
+
 const usePageDetail = (props: any) => {
   const chatId = props?.params?.id;
   const [message, setMessage] = useState("");
+  const [socketIO, setSocketIO] = useState<Socket | null>(null);
   const [isDisable, setIsDisable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [listMessage, setListMessage] = useState<[IMessage]>([{} as IMessage]);
+
+  // useEffect(() => {
+  //   // Event listeners for the WebSocket connection
+  //   const socket = io("http://localhost:5000", { path: "/sockets" });
+  //   setSocketIO(socket);
+  //   socket.on("connect", () => {
+  //     console.log("Connected to WebSocket");
+  //   });
+
+  //   socket.on("chat", (data) => {
+  //     console.log("Message received:", data);
+  //     listMessage.push({
+  //       id: Date.now(),
+  //       name: "GPT",
+  //       message: data,
+  //       created_at: new Date().toJSON(),
+  //       type: TYPE_CHAT.FROM,
+  //     });
+  //     setListMessage(listMessage);
+  //     setIsDisable(false);
+  //     setIsLoading(false);
+  //     localStorage.setItem(chatId, JSON.stringify(listMessage));
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   useEffect(() => {
     setListMessage(JSON.parse(localStorage.getItem(chatId) as string));
@@ -43,6 +74,8 @@ const usePageDetail = (props: any) => {
 
     let data: string;
     try {
+      // Sending messages
+      // socketIO?.emit("chat", question);
       const response = await chatApi.sendMessage({ message: question });
       data = response.data;
     } catch (error: any) {
@@ -75,6 +108,7 @@ const usePageDetail = (props: any) => {
     handleSubmit,
     ref,
     message,
+    setMessage,
     isDisable,
     isLoading,
     listMessage,

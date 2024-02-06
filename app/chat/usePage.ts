@@ -10,7 +10,7 @@ const usePage = () => {
     setChatHistory(localStorage.getItem("chatHistory")?.split(",") as []);
   }, []);
 
-  const CreatNewChat = async () => {
+  const CreatNewChat = () => {
     const chatId = Date.now().toString();
     localStorage.setItem(chatId, JSON.stringify([]));
     if (localStorage.getItem("chatHistory")) {
@@ -27,11 +27,31 @@ const usePage = () => {
     router.push("/chat/" + chatId);
   };
 
+  const DeleteChat = (chatId: string) => {
+    localStorage.removeItem(chatId);
+    let histories = localStorage.getItem("chatHistory");
+    if (histories) {
+      const countChat = histories.split(",").length;
+      if (countChat > 1) {
+        localStorage.setItem(
+          "chatHistory",
+          histories.replace(chatId + ",", "").replace("," + chatId, "")
+        );
+      } else {
+        localStorage.removeItem("chatHistory");
+      }
+    }
+    let listChat = localStorage.getItem("chatHistory")?.split(",");
+    setChatHistory(listChat?.sort((a, b) => Number(b) - Number(a)) as []);
+    router.push("/chat/");
+  };
+
   return {
     isDisable,
     isLoading,
     chatHistory,
     CreatNewChat,
+    DeleteChat,
   };
 };
 
